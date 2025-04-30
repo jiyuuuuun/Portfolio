@@ -1,20 +1,3 @@
-const techStack = [
-  { name: "Java", icon: "/icons/java.svg" },
-  { name: "Spring", icon: "/icons/spring.svg" },
-  { name: "MySQL", icon: "/icons/mysql.svg" },
-  { name: "Hibernate", icon: "/icons/hibernate.svg" },
-];
-
-const tools = [
-  { name: "Docker", icon: "/icons/docker.svg" },
-  { name: "AWS", icon: "/icons/aws.svg" },
-  { name: "IntelliJ", icon: "/icons/intellij.svg" },
-  { name: "Gradle", icon: "/icons/gradle.svg" },
-  { name: "VS Code", icon: "/icons/vscode.svg" },
-  { name: "Git", icon: "/icons/git.svg" },
-  { name: "Notion", icon: "/icons/notion.svg" },
-];
-
 export default function Skills() {
   const skills = {
     "Backend": ["Java", "Spring", "MySQL", "Hibernate"],
