@@ -62,7 +62,7 @@ export default function Experience() {
 
   return (
     <section id="experience" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Experience & Activities</h2>
         <div className="grid grid-cols-1 gap-6">
           {experiences.map((exp, idx) => (

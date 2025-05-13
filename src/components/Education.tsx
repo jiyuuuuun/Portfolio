@@ -26,7 +26,7 @@ export default function Education() {
 
   return (
     <section id="education" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Education</h2>
         <div className="grid grid-cols-1 gap-6">
           {education.map((edu, idx) => (

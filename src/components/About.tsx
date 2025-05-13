@@ -1,7 +1,7 @@
 export default function About() {
   return (
     <section id="about" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">About Me</h2>
         
         <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">

@@ -3,7 +3,7 @@ import { FaGithub, FaBlogger, FaEnvelope } from "react-icons/fa";
 export default function Contact() {
   return (
     <section id="contact" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
           <span className="text-gray-500"><FaEnvelope /></span> Contact
         </h2>

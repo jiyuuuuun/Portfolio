@@ -7,7 +7,7 @@ export default function Skills() {
 
   return (
     <section id="skills" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Tech Stack</h2>
         <div className="space-y-6">
           {Object.entries(skills).map(([category, items]) => (

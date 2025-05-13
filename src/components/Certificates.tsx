@@ -23,7 +23,7 @@ export default function Certificates() {
 
   return (
     <section id="certificates" className="py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Certificates</h2>
         <div className="space-y-6">
           {certificates.map((cert, idx) => (

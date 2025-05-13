@@ -36,17 +36,17 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       {/* 왼쪽 Hero(사이드) - 데스크탑 */}
-      <aside className="hidden md:block fixed left-0 top-0 h-screen w-[400px] bg-gray-50 shadow-md z-10 border-r border-gray-200">
+      <aside className="hidden md:block fixed left-0 top-0 h-screen w-[450px] bg-gray-50 shadow-md z-10 border-r border-gray-200">
         <div className="flex flex-col h-full justify-between py-10 px-12">
           <HeroSide activeSection={activeSection} />
         </div>
       </aside>
       {/* 모바일에서는 HeroSide가 위에 */}
-      <div className="flex flex-col w-full md:ml-[400px]">
+      <div className="flex flex-col w-full md:ml-[450px]">
         <div className="md:hidden bg-gray-50 shadow-sm px-6 py-10 border-b border-gray-200">
           <HeroSide activeSection={activeSection} />
         </div>
-        <main className="flex-1 p-4 md:p-12 space-y-8">
+        <main className="flex-1 p-4 md:p-8 md:px-12 lg:px-16 space-y-8 max-w-full">
           <section id="about" className="bg-white rounded-lg shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
             <About />
           </section>
