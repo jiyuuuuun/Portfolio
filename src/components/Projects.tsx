@@ -374,10 +374,10 @@ export default function Projects() {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <a 
-                    href={project.github} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                <a 
+                  href={project.github} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
                     className="flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
                   >
                     <FaGithub className="mr-2" /> GitHub
@@ -392,23 +392,23 @@ export default function Projects() {
                       <FaExternalLinkAlt className="mr-2" /> 배포 링크
                     </a>
                   )}
-                </div>
+              </div>
                 
-                <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                   <span className="text-sm font-medium text-gray-700 mr-2 flex items-center">
                     <FaCode className="mr-1" />
                     기술 스택:
                   </span>
-                  {project.technologies.map((tech, techIdx) => (
-                    <span 
-                      key={techIdx}
+                {project.technologies.map((tech, techIdx) => (
+                  <span 
+                    key={techIdx}
                       className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs transition-colors"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
+                  >
+                    {tech}
+                  </span>
+                ))}
               </div>
+            </div>
             </div>
           </div>
           
@@ -438,4 +438,4 @@ export default function Projects() {
       </div>
     </section>
   );
-}
+} 

@@ -38,7 +38,8 @@ export default function HeroSide({ activeSection }: HeroSideProps) {
         </div>
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-gray-800">황지윤</h1>
-          <p className="text-xl text-gray-600">백엔드 개발자</p>
+          <p className="text-xl text-gray-600">꾸준함으로 성장중인</p>
+          <p className="text-xl text-gray-600">백엔드 개발자 황지윤입니다</p>
         </div>
 
         <div className="flex gap-5 mt-3">
