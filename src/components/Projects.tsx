@@ -17,7 +17,8 @@ export default function Projects() {
     { src: "/images/학플홈페이지.png", alt: "Hakple 홈페이지", title: "홈페이지" },
     { src: "/images/학플게시판.png", alt: "Hakple 게시판", title: "게시판" },
     { src: "/images/학플게시물.png", alt: "Hakple 게시물", title: "게시물" },
-    { src: "/images/학플마이페이지.png", alt: "Hakple 마이페이지", title: "마이페이지" }
+    { src: "/images/학플마이페이지.png", alt: "Hakple 마이페이지", title: "마이페이지" },
+    { src: "/images/관리자페이지.png" ,alt: "Hakple 관리자페이지", title: "관리자페이지" }
   ];
 
   // 이미지 이동 함수
