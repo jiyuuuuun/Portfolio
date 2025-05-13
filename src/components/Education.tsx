@@ -4,7 +4,7 @@ export default function Education() {
       title: "성결대학교",
       degree: "컴퓨터공학 학사 (편입)",
       period: "2022.03 - 2025.02",
-      description: "컴퓨터공학과 학생회 활동, 졸업 프로젝트 수행",
+      description: "졸업 • 학점 3.79/4.5 • 컴퓨터공학과 학생회 활동, 졸업 프로젝트 수행",
       icon: (
         <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -12,13 +12,13 @@ export default function Education() {
       )
     },
     {
-      title: "멋쟁이사자처럼 백엔드 부트캠프 13기: Java",
-      degree: "백엔드 개발 과정 수료",
-      period: "2024.11 - 2025.06",
-      description: "Spring Boot 기반의 웹 서비스 개발, REST API 설계, DB 모델링, 배포 등 백엔드 전반을 학습",
+      title: "경인여자대학교",
+      degree: "보건의료관리과",
+      period: "2020.03 ~ 2022.02",
+      description: "졸업 • 학점 4.08/4.5",
       icon: (
         <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       )
     }

@@ -5,6 +5,7 @@ import About from '@/components/About'
 import Projects from '@/components/Projects'
 import Skills from '@/components/Skills'
 import Education from '@/components/Education'
+import Experience from '@/components/Experience'
 import Certificates from '@/components/Certificates'
 import Contact from '@/components/Contact'
 import HeroSide from '@/components/HeroSide'
@@ -54,6 +55,9 @@ export default function Home() {
           </section>
           <section id="education" className="bg-white rounded-lg shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
             <Education />
+          </section>
+          <section id="experience" className="bg-white rounded-lg shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
+            <Experience />
           </section>
           <section id="certificates" className="bg-white rounded-lg shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
             <Certificates />
