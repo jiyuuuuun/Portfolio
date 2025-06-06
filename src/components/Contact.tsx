@@ -11,14 +11,14 @@ export default function Contact() {
           <div className="flex items-center gap-3">
             <FaEnvelope className="text-gray-500" />
             <span className="font-medium text-gray-700">이메일:</span>
-            <a href="mailto:your.email@example.com" className="text-gray-600 hover:text-gray-800 transition-colors">
+            <a href="mailto:hwangjy001@naver.com" className="text-gray-600 hover:text-gray-800 transition-colors">
               hwangjy001@naver.com
             </a>
           </div>
           <div className="flex items-center gap-3">
             <FaGithub className="text-gray-500" />
             <span className="font-medium text-gray-700">GitHub:</span>
-            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" 
+            <a href="https://github.com/jiyuuuuun" target="_blank" rel="noopener noreferrer" 
               className="text-gray-600 hover:text-gray-800 transition-colors">
               https://github.com/jiyuuuuun
             </a>
@@ -26,7 +26,7 @@ export default function Contact() {
           <div className="flex items-center gap-3">
             <FaBlogger className="text-gray-500" />
             <span className="font-medium text-gray-700">Blog:</span>
-            <a href="https://blog.yourusername.com" target="_blank" rel="noopener noreferrer"
+            <a href="https://jjiyuuuuun.tistory.com" target="_blank" rel="noopener noreferrer"
               className="text-gray-600 hover:text-gray-800 transition-colors">
               https://jjiyuuuuun.tistory.com
             </a>
