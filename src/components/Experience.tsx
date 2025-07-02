@@ -17,35 +17,6 @@ export default function Experience() {
       )
     },
     {
-      title: "브이유텍",
-      subtitle: "이미지 객체 인식 라벨링",
-      period: "2024.05 ~ 2024.05",
-      description: [
-        "AI 모델 학습용 이미지에서 사람 객체 인식 및 라벨링 수행",
-        "이미지 내 인물의 위치를 Bounding Box 형태로 지정하고 태그 입력",
-        "외부 배경과 혼잡도가 높은 장면에서 정확도 높은 작업 수행"
-      ],
-      icon: (
-        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      )
-    },
-    {
-      title: "브이유텍",
-      subtitle: "생선 이미지 데이터 라벨링",
-      period: "2024.10 ~ 2024.10",
-      description: [
-        "생선 이미지를 대상으로 한 AI 학습용 데이터 라벨링 작업 수행",
-        "다양한 각도와 배경의 이미지에서 물체(생선 종류) 식별 및 구역 지정"
-      ],
-      icon: (
-        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      )
-    },
-    {
       title: "멋쟁이사자처럼",
       subtitle: "백엔드 부트캠프 13기: Java",
       period: "2024.11 ~ 2025.06",
