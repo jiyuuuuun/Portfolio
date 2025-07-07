@@ -176,6 +176,20 @@ export default function Projects() {
             "색상, 컴포넌트, 레이아웃 정의",
             "공통 UI 컴포넌트 설계 및 반응형 대응"
           ]
+        },
+        {
+          title: "배포 및 운영 → 관련 기술과 고민은 블로그 글에서 확인 가능합니다",
+          details: [
+            "IaC 기반 클라우드 인프라 구성",
+            "  - Terraform을 활용한 AWS 리소스 자동화",
+            "  - IAM, EC2, RDS, S3 등 주요 AWS 서비스 관리",
+            "서버 및 네트워크 구성",
+            "  - AWS EC2 인스턴스에 Nginx 기반 백엔드 서버 배포",
+            "  - VPC, 보안 그룹 등 기본 네트워크 설정 구성",
+            "CI/CD 파이프라인 구축",
+            "  - GitHub Actions 기반 백엔드 테스트 및 EC2 자동 배포",
+            "  - 프론트엔드는 Vercel을 활용한 자동 빌드 및 배포"
+          ]
         }
       ],
       reflections: [
@@ -717,10 +731,28 @@ export default function Projects() {
           <div className="space-y-4">
             {project.myContributions.map((contrib: Contribution, i: number) => (
               <div key={i} className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-md text-gray-800 mb-2">{contrib.title}</h3>
+                <h3 className="font-semibold text-md text-gray-800 mb-2">
+                  {contrib.title.includes('블로그 글') ? '배포 및 운영' : contrib.title}
+                </h3>
+                {contrib.title.includes('블로그 글') && (
+                  <p className="text-gray-500 text-sm mb-3">
+                    → 관련 기술과 고민은{' '}
+                    <a 
+                      href="https://jjiyuuuuun.tistory.com/93" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-600 hover:text-gray-800 underline decoration-gray-400 hover:decoration-gray-600"
+                    >
+                      블로그 글
+                    </a>
+                    에서 확인 가능합니다
+                  </p>
+                )}
                 <ul className="list-disc pl-5 space-y-1">
                   {contrib.details.map((detail: string, j: number) => (
-                    <li key={j} className="text-gray-700">{detail}</li>
+                    detail.startsWith('  - ')
+                      ? <div key={j} className="ml-4 text-sm text-gray-600">- {detail.replace('  - ', '')}</div>
+                      : <li key={j} className="text-gray-700">{detail}</li>
                   ))}
                 </ul>
               </div>
@@ -768,34 +800,34 @@ export default function Projects() {
                   <table className="min-w-full border border-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">분석 항목</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Redis 구조</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">캐시 키 예시</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">TTL 설정</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">목적 및 효과</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 border-b">분석 항목</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 border-b">Redis 구조</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 border-b">캐시 키 예시</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 border-b">TTL 설정</th>
+                        <th className="px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-gray-700 border-b">목적 및 효과</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-b">
-                        <td className="px-4 py-3 text-sm text-gray-700">카테고리별 비품 수량/종류 요약</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">Value (Map)</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">category_summary:managementId</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">30분</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">반복 조회에 즉시 응답, 전체 분류 통계 캐싱</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">카테고리별 비품 수량/종류 요약</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">Value (Map)</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700 font-mono">category_summary:managementId</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">30분</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">반복 조회에 즉시 응답, 전체 분류 통계 캐싱</td>
                       </tr>
                       <tr className="border-b">
-                        <td className="px-4 py-3 text-sm text-gray-700">품목별 출고 사용 빈도 (랭킹)</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">ZSet</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">item_usage_frequency:managementId</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">실시간</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">출고 시 점수 누적, 빠른 정렬 및 랭킹 조회</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">품목별 출고 사용 빈도 (랭킹)</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">ZSet</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700 font-mono">item_usage_frequency:managementId</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">실시간</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">출고 시 점수 누적, 빠른 정렬 및 랭킹 조회</td>
                       </tr>
                       <tr>
-                        <td className="px-4 py-3 text-sm text-gray-700">Outbound 상태별 인스턴스 개수 통계</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">Hash</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">item_instances:outbound_count:managementId</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">10분</td>
-                        <td className="px-4 py-3 text-sm text-gray-700">상태별 수량 조회 속도 개선, DB Count 제거</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">Outbound 상태별 인스턴스 개수 통계</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">Hash</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700 font-mono">item_instances:outbound_count:managementId</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">10분</td>
+                        <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">상태별 수량 조회 속도 개선, DB Count 제거</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1091,10 +1123,10 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
           {projects.map((project) => (
             <div key={project.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
               {/* 프로젝트 헤더 */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
                   {/* 로고 섹션 - 왼쪽 배치 */}
-                  <div className="w-40 h-40 md:w-48 md:h-48 mx-auto md:mx-0 flex-shrink-0">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto md:mx-0 flex-shrink-0">
                     <Image
                       src={project.id === 'juseyo' ? "/images/주세요이미지.png" : "/images/logo.png"}
                       alt={`${project.title} 로고`}
@@ -1108,23 +1140,23 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
                   {/* 프로젝트 정보 */}
                   <div className="flex flex-col flex-grow">
                     <div className="mb-4">
-                      <h3 className="text-xl font-bold text-gray-800 mb-2">{project.title}</h3>
+                      <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2">{project.title}</h3>
                       <div className="flex items-center text-gray-600 mb-3">
                         <FaCalendarAlt className="mr-2 text-sm" />
                         <span className="text-sm">{project.period}</span>
                       </div>
-                      <p className="text-gray-600 mb-3">{project.description}</p>
-                      <p className="text-sm text-gray-500">{project.role}</p>
+                      <p className="text-sm md:text-base text-gray-600 mb-3">{project.description}</p>
+                      <p className="text-xs md:text-sm text-gray-500">{project.role}</p>
                     </div>
                     
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-1 md:gap-2 mb-4">
                       <a 
                         href={project.github} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors"
+                        className="flex items-center justify-center px-2 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 transition-colors text-sm"
                       >
-                        <FaGithub className="mr-2" /> GitHub
+                        <FaGithub className="mr-1 md:mr-2" /> GitHub
                       </a>
                       {project.id === 'juseyo' && (
                         <>
@@ -1132,17 +1164,17 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
                             href="https://youtu.be/xFiNAreXASI?si=UQrH5aXcmsNUwpeV" 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="flex items-center justify-center px-4 py-2 bg-red-100 hover:bg-red-200 rounded-md text-red-700 transition-colors"
+                            className="flex items-center justify-center px-2 md:px-4 py-2 bg-red-100 hover:bg-red-200 rounded-md text-red-700 transition-colors text-sm"
                           >
-                            <FaExternalLinkAlt className="mr-2" /> 시연 영상
+                            <FaExternalLinkAlt className="mr-1 md:mr-2" /> 시연 영상
                           </a>
                           <a 
                             href="https://youtu.be/FELFFBucDe0?si=jswpwxR4ln5Zg1qp" 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="flex items-center justify-center px-4 py-2 bg-orange-100 hover:bg-orange-200 rounded-md text-orange-700 transition-colors"
+                            className="flex items-center justify-center px-2 md:px-4 py-2 bg-orange-100 hover:bg-orange-200 rounded-md text-orange-700 transition-colors text-sm"
                           >
-                            <FaExternalLinkAlt className="mr-2" /> 발표 영상
+                            <FaExternalLinkAlt className="mr-1 md:mr-2" /> 발표 영상
                           </a>
                         </>
                       )}
@@ -1151,22 +1183,22 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
                           href="https://youtu.be/fph2-jl0f7Q?si=U_PJyop3Et76h0rN" 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="flex items-center justify-center px-4 py-2 bg-green-100 hover:bg-green-200 rounded-md text-green-700 transition-colors"
+                          className="flex items-center justify-center px-2 md:px-4 py-2 bg-green-100 hover:bg-green-200 rounded-md text-green-700 transition-colors text-sm"
                         >
-                          <FaExternalLinkAlt className="mr-2" /> 발표 영상
+                          <FaExternalLinkAlt className="mr-1 md:mr-2" /> 발표 영상
                         </a>
                       )}
                     </div>
                     
-                    <div className="flex flex-wrap gap-2">
-                      <span className="text-sm font-medium text-gray-700 mr-2 flex items-center">
+                    <div className="flex flex-wrap gap-1 md:gap-2">
+                      <span className="text-xs md:text-sm font-medium text-gray-700 mr-2 flex items-center">
                         <FaCode className="mr-1" />
                         기술 스택:
                       </span>
                       {project.technologies.map((tech, techIdx) => (
                         <span 
                           key={techIdx}
-                          className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs transition-colors"
+                          className="px-2 md:px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs transition-colors"
                         >
                           {tech}
                         </span>
@@ -1181,7 +1213,7 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
                 {tabs.map((tab) => (
                   <button
                     key={tab}
-                    className={`px-4 py-3 text-sm whitespace-nowrap font-medium flex items-center ${
+                    className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm whitespace-nowrap font-medium flex items-center ${
                       getSelectedTab(project.id) === tab 
                         ? 'text-blue-600 border-b-2 border-blue-600' 
                         : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
@@ -1189,13 +1221,14 @@ URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
                     onClick={() => setSelectedTab(project.id, tab)}
                   >
                     {tabIcons[tab]}
-                    {tab}
+                    <span className="hidden sm:inline">{tab}</span>
+                    <span className="sm:hidden">{tab.length > 4 ? tab.substring(0, 4) : tab}</span>
                   </button>
                 ))}
               </div>
               
               {/* 선택된 탭 내용 */}
-              <div className="p-6">
+              <div className="p-4 md:p-6">
                 {renderTabContent(project)}
               </div>
             </div>
