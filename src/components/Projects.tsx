@@ -242,12 +242,12 @@ export default function Projects() {
         "",
         "💬 댓글 & 좋아요",
         "• 게시글 댓글 작성, 수정, 삭제 기능",
-        "• 게시글 좋아요 기능으로 상호작용 활성화",
+        "• 게시글 &apos;좋아요&apos; 기능으로 상호작용 활성화",
         "• 커뮤니티 기능 강화",
         "",
         "🔔 실시간 알림",
         "• 댓글 작성 시 실시간 알림",
-        "• 게시글 좋아요 시 실시간 알림",
+        "• 게시글 &apos;좋아요&apos; 시 실시간 알림",
         "• 공지사항 등록 시 실시간 알림",
         "• 서비스 참여도 향상",
         "",
@@ -650,7 +650,7 @@ export default function Projects() {
                     </h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>게시글 댓글 작성, 수정, 삭제 기능</li>
-                      <li>게시글 좋아요 기능으로 상호작용 활성화</li>
+                      <li>게시글 &apos;좋아요&apos; 기능으로 상호작용 활성화</li>
                       <li>커뮤니티 기능 강화</li>
                     </ul>
                   </div>
@@ -663,7 +663,7 @@ export default function Projects() {
                     </h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>댓글 작성 시 실시간 알림</li>
-                      <li>게시글 좋아요 시 실시간 알림</li>
+                      <li>게시글 &apos;좋아요&apos; 시 실시간 알림</li>
                       <li>공지사항 등록 시 실시간 알림</li>
                       <li>서비스 참여도 향상</li>
                     </ul>
@@ -780,13 +780,15 @@ export default function Projects() {
                   <FaChevronRight className="text-xl" />
                 </button>
                 
-                <img
-                  src={projectImages[currentIndex].src}
-                  alt={projectImages[currentIndex].alt}
-                  className="max-w-full max-h-[70vh] object-contain"
-                  style={{ display: 'block', margin: '0 auto' }}
-                  loading="eager"
-                />
+                <div className="relative w-full h-[70vh] flex items-center justify-center">
+                  <Image
+                    src={projectImages[currentIndex].src}
+                    alt={projectImages[currentIndex].alt}
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
               
               {/* 이미지 제목과 인디케이터 */}
@@ -827,7 +829,7 @@ export default function Projects() {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Projects</h2>
         
         <div className="space-y-8">
-          {projects.map((project, projectIndex) => (
+          {projects.map((project) => (
             <div key={project.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
               {/* 프로젝트 헤더 */}
               <div className="p-6 border-b border-gray-200">
