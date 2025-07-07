@@ -4,6 +4,40 @@ import Image from 'next/image';
 
 type TabType = '소개' | '팀 구성' | '주요 기능' | '담당 역할' | '회고' | 'UI';
 
+interface TeamMember {
+  name: string;
+  role: string;
+}
+
+interface Contribution {
+  title: string;
+  details: string[];
+}
+
+interface Reflection {
+  title: string;
+  details: string[];
+}
+
+interface Project {
+  id: string;
+  title: string;
+  period: string;
+  description: string;
+  longDescription: string;
+  role: string;
+  github: string;
+  liveDemo?: string;
+  technologies: string[];
+  features: string[];
+  challenges: string;
+  lessons: string;
+  team: TeamMember[];
+  myContributions: Contribution[];
+  reflections: Reflection[];
+  thumbnail: string;
+}
+
 export default function Projects() {
   const [selectedTabs, setSelectedTabs] = useState<{ [key: string]: TabType }>({});
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{ [key: string]: number }>({});
@@ -361,7 +395,7 @@ export default function Projects() {
   };
 
   // 선택된 탭에 따른 내용 렌더링
-  const renderTabContent = (project: any) => {
+  const renderTabContent = (project: Project) => {
     const selectedTab = getSelectedTab(project.id);
     
     switch (selectedTab) {
@@ -397,7 +431,7 @@ export default function Projects() {
                 </tr>
               </thead>
               <tbody>
-                {project.team.map((member: any, i: number) => (
+                {project.team.map((member: TeamMember, i: number) => (
                   <tr key={i} className={i % 2 === 0 ? 'bg-gray-100' : ''}>
                     <td className="py-2 px-3 text-gray-800">{member.name}</td>
                     <td className="py-2 px-3 text-gray-600">{member.role}</td>
@@ -679,7 +713,7 @@ export default function Projects() {
       case '담당 역할':
         return (
           <div className="space-y-4">
-            {project.myContributions.map((contrib: any, i: number) => (
+            {project.myContributions.map((contrib: Contribution, i: number) => (
               <div key={i} className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-md text-gray-800 mb-2">{contrib.title}</h3>
                 <ul className="list-disc pl-5 space-y-1">
@@ -694,7 +728,7 @@ export default function Projects() {
       case '회고':
         return (
           <div className="space-y-4">
-            {project.reflections.map((reflection: any, i: number) => (
+            {project.reflections.map((reflection: Reflection, i: number) => (
               <div key={i} className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-md text-gray-800 mb-2">{reflection.title}</h3>
                 <ul className="list-disc pl-5 space-y-1">
