@@ -525,7 +525,7 @@ export default function Projects() {
                       <li>1:1 / 고객센터 / 그룹 채팅방 생성 및 관리</li>
                       <li>JWT 쿠키 인증 기반 세션 사용자 메시지 처리</li>
                       <li>메시지 RDS 저장, 채팅방 상태 Redis 관리</li>
-                      <li>미확인 메시지 'NEW' 뱃지 표시</li>
+                      <li>미확인 메시지 &apos;NEW&apos; 뱃지 표시</li>
                       <li>중복 채팅방 생성 방지</li>
                     </ul>
                   </div>
