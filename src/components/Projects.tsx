@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FaGithub, FaExternalLinkAlt, FaCalendarAlt, FaUsers, FaCode, FaLightbulb, FaBrain, FaInfo, FaChevronLeft, FaChevronRight, FaDesktop } from 'react-icons/fa';
 import Image from 'next/image';
 
-type TabType = '소개' | '팀 구성' | '주요 기능' | '담당 역할' | '회고' | 'UI';
+type TabType = '소개' | '팀 구성' | '주요 기능' | '담당 역할' | '성능 최적화' | '문제 해결 사례' | '회고' | 'UI';
 
 interface TeamMember {
   name: string;
@@ -43,7 +43,7 @@ export default function Projects() {
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{ [key: string]: number }>({});
 
   // 탭 정의
-  const tabs: TabType[] = ['소개', '팀 구성', '주요 기능', '담당 역할', '회고', 'UI'];
+  const tabs: TabType[] = ['소개', '팀 구성', '주요 기능', '담당 역할', '성능 최적화', '문제 해결 사례', '회고', 'UI'];
 
   // UI 이미지 정의
   const uiImages = {
@@ -108,7 +108,7 @@ export default function Projects() {
       role: "PM, 백엔드 개발, 프론트엔드 개발",
       github: "https://github.com/treejh/JUSEYO",
       liveDemo: "https://www.app.jusey0.site/",
-      technologies: ["Java", "Spring Boot", "Spring Security", "MySQL", "React", "Next.js", "TypeScript", "Docker", "AWS EC2", "AWS S3", "NGINX", "Terraform", "GitHub Actions", "Redis", "Swagger"],
+      technologies: ["Java", "Spring Boot", "Spring Security", "MySQL", "React", "Next.js", "TypeScript", "Docker", "AWS EC2", "AWS S3", "NGINX", "Terraform", "GitHub Actions", "Redis", "Swagger", "JavaScript"],
       features: [
         "🌟 부서 및 역할(Role) 기반 권한 관리",
         "🔄 요청 → 승인 → 반납 흐름 구조",
@@ -222,7 +222,7 @@ export default function Projects() {
       role: "백엔드 개발, 프론트엔드 전체 구현",
       github: "https://github.com/golden-dobakhe/hakple",
       liveDemo: "https://www.hakple.site",
-      technologies: ["Java ", "Spring Boot", "JavaScript", "React", "Next.js", "MySQL", "Redis", "AWS S3", "Docker", "Terraform", "AWS EC2", "GitHub Actions"],
+      technologies: ["Java", "Spring Boot", "Spring Security", "JavaScript", "React", "Next.js", "TypeScript", "MySQL", "Redis", "AWS S3", "Docker", "Terraform", "AWS EC2", "GitHub Actions", "NGINX", "Swagger"],
       features: [
         "👥 회원 관리",
         "• JWT(JSON Web Token) 기반 인증 시스템으로 보안 강화",
@@ -390,6 +390,8 @@ export default function Projects() {
     '팀 구성': <FaUsers className="mr-2 text-blue-600" />,
     '주요 기능': <FaCode className="mr-2 text-blue-600" />,
     '담당 역할': <FaLightbulb className="mr-2 text-blue-600" />,
+    '성능 최적화': <FaCode className="mr-2 text-green-600" />,
+    '문제 해결 사례': <FaCode className="mr-2 text-orange-600" />,
     '회고': <FaBrain className="mr-2 text-blue-600" />,
     'UI': <FaDesktop className="mr-2 text-blue-600" />
   };
@@ -723,6 +725,263 @@ export default function Projects() {
                 </ul>
               </div>
             ))}
+          </div>
+        );
+      case '성능 최적화':
+        // Juseyo 프로젝트인 경우에만 성능 최적화 내용 표시
+        if (project.id === 'juseyo') {
+          return (
+            <div className="space-y-6">
+              {/* 프로젝트 목표 */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">📦 Inventory 분석 성능 최적화 시스템 구축</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 프로젝트 목표</h4>
+                      <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                        <li>분석 API 응답 속도 개선 및 실시간성 확보</li>
+                        <li>DB 부하를 줄이고, 트래픽 증가에 안정적으로 대응</li>
+                        <li>관리자/사용자 편의를 위한 Redis 기반 캐시 및 무효화 기능 제공</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800 mb-2">🧠 기술 스택 및 구조</h4>
+                      <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                        <li><strong>Backend:</strong> Spring Boot, JPA (Hibernate)</li>
+                        <li><strong>캐싱:</strong> Redis (Value, ZSet, Hash)</li>
+                        <li><strong>보안:</strong> Spring Security (@PreAuthorize)</li>
+                        <li><strong>설계 기준:</strong> 사용자별 managementId 기반 Redis 키 분리 및 멀티 테넌시 고려</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Redis 캐싱 전략 */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">🚀 Redis 캐싱 전략 및 적용 내용</h3>
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border border-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">분석 항목</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Redis 구조</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">캐시 키 예시</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">TTL 설정</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">목적 및 효과</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="px-4 py-3 text-sm text-gray-700">카테고리별 비품 수량/종류 요약</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">Value (Map)</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">category_summary:managementId</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">30분</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">반복 조회에 즉시 응답, 전체 분류 통계 캐싱</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="px-4 py-3 text-sm text-gray-700">품목별 출고 사용 빈도 (랭킹)</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">ZSet</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">item_usage_frequency:managementId</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">실시간</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">출고 시 점수 누적, 빠른 정렬 및 랭킹 조회</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 text-sm text-gray-700">Outbound 상태별 인스턴스 개수 통계</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">Hash</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-mono">item_instances:outbound_count:managementId</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">10분</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">상태별 수량 조회 속도 개선, DB Count 제거</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div className="mt-4 p-3 bg-gray-50 rounded">
+                  <p className="text-sm text-gray-700">
+                    <strong>💡 Redis TTL 기반으로 데이터 신선도 유지 및 메모리 효율성 고려</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* 성능 개선 효과 */}
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📊 성능 개선 효과</h3>
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">분석 항목</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">개선 전 방식</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">개선 후 방식</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">정성적 성능 효과</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="px-4 py-3 text-sm text-gray-700">📦 카테고리 요약 조회</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">전체 Item 조회 + Java groupingBy</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">Redis Value 구조 사용, DTO Map 캐싱</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">응답 속도 264ms → 65ms (DB 의존 제거, 반복 조회 최적화)</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="px-4 py-3 text-sm text-gray-700">📊 품목 사용 빈도 조회 (Top N)</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">출고 로그 정렬 쿼리 반복 + ZSet 역직렬화 병목</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">Redis ZSet + StringRedisTemplate + DTO 경량화 적용</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">응답 시간 277ms → 92ms (약 66% 단축), 실시간 정렬 제공</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 text-sm text-gray-700">📈 Outbound 상태별 개수 통계</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">상태별 DB Count 반복</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">Redis Hash에 상태별 개수 저장</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">응답 속도 756ms → 86ms, 트래픽 증가 시 DB 부하 완화</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div className="mt-4 space-y-3">
+                  <div className="p-3 bg-gray-50 rounded border-l-4 border-gray-400">
+                    <p className="text-sm text-gray-700">
+                      <strong>🔍 ZSet 조회 시 TypedTuple&lt;Object&gt;로 인해 발생한 역직렬화 병목을</strong><br/>
+                      <strong>StringRedisTemplate 기반으로 구조 개선하고 DTO를 경량화하여</strong><br/>
+                      <strong>평균 응답 시간 약 66% 개선 (277ms → 92ms)</strong>
+                    </p>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded">
+                    <p className="text-sm text-gray-700">
+                      <strong>✅ 실제 Postman 체감 응답 시간도 평균 693ms → 203ms 수준으로 감소</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 성능 테스트 도구 */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">🧪 성능 테스트 도구 및 방법</h3>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔹 Postman (외부 체감 속도 측정)</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>첫 요청 시 DB 조회 → 두 번째 요청부터 Redis HIT 비교</li>
+                      <li>응답 시간 분석: TTFB, Total, Content Download</li>
+                      <li>결과 예시: Redis HIT 전 600~700ms → Redis HIT 후 150~200ms</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔹 Spring StopWatch (내부 성능 로깅)</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>각 메서드에 StopWatch 삽입하여 실행 시간 측정</li>
+                      <li>Redis HIT / MISS 여부에 따라 로그 출력</li>
+                      <li>병목 구간 명확화 → 품목 빈도 조회(ZSet) 성능 튜닝 성공</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* 코드 예시 */}
+                <div className="mt-6 bg-gray-100 p-4 rounded">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">💻 코드 예시</h4>
+                  <pre className="text-sm text-gray-700 overflow-x-auto">
+{`StopWatch sw = new StopWatch();
+sw.start();
+// ... 처리
+sw.stop();
+log.info("응답 시간: {} ms", sw.getTotalTimeMillis());`}
+                  </pre>
+                </div>
+              </div>
+              
+            </div>
+          );
+        }
+        
+        // 다른 프로젝트는 기본 메시지 표시
+        return (
+          <div className="text-center py-8">
+            <p className="text-gray-500">이 프로젝트에는 성능 최적화 내용이 없습니다.</p>
+          </div>
+        );
+      case '문제 해결 사례':
+        // Juseyo 프로젝트인 경우에만 문제 해결 사례 표시
+        if (project.id === 'juseyo') {
+          return (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">🛠 문제 해결 사례 – 공공 API 인증키 오류</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📌 문제 상황</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>공공데이터포털 API 호출 시, Spring Boot에서는 400 Bad Request 발생</li>
+                      <li>오류 메시지: &quot;등록되지 않은 인증키입니다&quot;</li>
+                      <li>Postman에서는 정상 동작하지만, 서버에서는 인증 실패</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔍 원인 분석</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>인코딩된 인증키를 URL 문자열에 직접 붙였더니, Spring이 <strong>다시 인코딩</strong> → 이중 인코딩 발생</li>
+                      <li><code>UriComponentsBuilder.queryParam()</code> 사용 시, <code>=</code> 같은 특수문자 오류 발생</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 해결 방법</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li><code>URLEncoder.encode()</code>로 명시적으로 인코딩 처리</li>
+                      <li><code>URI.create()</code>로 완성된 URL 직접 생성하여 RestTemplate에 전달</li>
+                    </ul>
+                  </div>
+
+                  {/* 코드 예시 */}
+                  <div className="bg-gray-100 p-4 rounded">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">💻 해결 코드</h4>
+                    <pre className="text-sm text-gray-700 overflow-x-auto">
+{`String encodedKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
+URI uri = URI.create(baseUrl + "?serviceKey=" + encodedKey);`}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🎯 결과</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      <li>인증 오류 해결, 공공 API 정상 호출 성공</li>
+                      <li>Spring의 URI 처리 방식에 대한 이해도 향상</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-3 bg-gray-50 rounded">
+                    <p className="text-sm text-gray-700">
+                      <strong>🔗 </strong>
+                      <a 
+                        href="https://jjiyuuuuun.tistory.com/91" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        Tistory 블로그 글 참고 링크
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        
+        // 다른 프로젝트는 기본 메시지 표시
+        return (
+          <div className="text-center py-8">
+            <p className="text-gray-500">이 프로젝트에는 문제 해결 사례가 없습니다.</p>
           </div>
         );
       case '회고':
