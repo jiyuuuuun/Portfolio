@@ -770,7 +770,7 @@ export default function Projects() {
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">🔶 1. 배경</h4>
-                    <p className="text-sm text-gray-700 mb-2">Inventory 시스템에서는 관리자 페이지에서 다음과 같은 분석 통계 API들이 자주 호출되고 있었습니다:</p>
+                    <p className="text-sm text-gray-700 mb-2">관리자 페이지에서 다음과 같은 분석 통계 API들이 자주 호출되고 있었습니다:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>카테고리별 수량 및 종류 통계</li>
                       <li>품목 사용 빈도 (Top N) 랭킹</li>
