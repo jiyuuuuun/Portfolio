@@ -1134,9 +1134,9 @@ boolean isLiked = likedMap.getOrDefault(comment.getId(), false);`}
                 </div>
                 
                 <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <strong>💡 핵심 개선:</strong> N+1 쿼리 문제 해결로 쿼리 수를 "댓글 수 + 1"에서 "1"로 대폭 감소시켜 전체적인 성능 향상을 달성했습니다.
-                  </p>
+                                      <p className="text-sm text-gray-700">
+                      <strong>💡 핵심 개선:</strong> N+1 쿼리 문제 해결로 쿼리 수를 &quot;댓글 수 + 1&quot;에서 &quot;1&quot;로 대폭 감소시켜 전체적인 성능 향상을 달성했습니다.
+                    </p>
                 </div>
               </div>
 
@@ -1235,7 +1235,7 @@ boolean isLiked = likedMap.getOrDefault(comment.getId(), false);`}
                           </pre>
                         </div>
                         <p className="text-sm text-gray-700 mt-1">하지만 키에 포함된 +, = 등의 특수 문자 때문에 Spring 내부에서 URI 문법 오류 발생</p>
-                        <p className="text-sm text-gray-700">→ IllegalArgumentException: Invalid character '=' for QUERY_PARAM</p>
+                        <p className="text-sm text-gray-700">→ IllegalArgumentException: Invalid character &apos;=&apos; for QUERY_PARAM</p>
                       </li>
                     </ol>
                   </div>
@@ -1275,7 +1275,7 @@ URI uri = URI.create(fullUrl);`}
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">📈 결과</h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>공공데이터포털 API 호출이 정상적으로 수행</li>
-                      <li>인증키 오류("등록되지 않은 인증키 입니다.") 해결됨</li>
+                      <li>인증키 오류(&quot;등록되지 않은 인증키 입니다.&quot;) 해결됨</li>
                       <li>이후에도 400 오류 또는 URI 인코딩 오류 없이 안정적으로 동작</li>
                     </ul>
                   </div>
