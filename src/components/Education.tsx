@@ -4,7 +4,7 @@ export default function Education() {
       title: "성결대학교",
       degree: "컴퓨터공학 학사 (편입)",
       period: "2022.03 - 2025.02",
-      description: "졸업 • 학점 3.79/4.5 • 컴퓨터공학과 학생회 활동, 졸업 프로젝트 수행 • 설계 프로젝트 수상",
+      description: "졸업 • 학점 3.79/4.5 • 컴퓨터공학과 학생회 활동, 졸업 프로젝트 수행 • 설계 경진대회회 수상",
       icon: (
         <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
