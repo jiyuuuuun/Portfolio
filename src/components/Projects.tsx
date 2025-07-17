@@ -1290,7 +1290,7 @@ boolean isLiked = likedMap.getOrDefault(comment.getId(), false); // O(1)`}
                   {/* 문제 */}
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">🧨 문제</h4>
-                    <p className="text-sm text-gray-700 mb-2">Spring Boot 서버에서 공공데이터포털의 사업자 상태조회 API를 호출하려 했으나 다음과 같은 문제가 발생하였습니다:</p>
+                    <p className="text-sm text-gray-700 mb-2">Spring Boot 서버에서 공공데이터포털의 사업자 상태조회 API를 호출하려 했으나 다음과 같은 문제가 발생:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>Postman에서는 정상 호출, 하지만 Spring Boot 애플리케이션에서는 400 Bad Request 응답 발생</li>
                     </ul>
@@ -1426,7 +1426,7 @@ URI uri = URI.create(fullUrl);`}
                   {/* 문제 */}
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">🧨 문제</h4>
-                    <p className="text-sm text-gray-700 mb-2">서비스 내 댓글에 대한 좋아요 기능을 구현하던 중, 다음과 같은 문제가 발생하였습니다:</p>
+                    <p className="text-sm text-gray-700 mb-2">서비스 내 댓글에 대한 좋아요 기능을 구현하던 중, 다음과 같은 문제가 발생:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>여러 사용자가 동시에 좋아요를 누르는 경우, likeCount 필드를 DB에서 직접 수정함에 따라 트랜잭션 충돌 및 락 경합 현상이 발생함</li>
                       <li>동시 요청 처리 중 좋아요 수가 틀어지거나, DB 반영이 지연되는 등의 데이터 정합성 문제가 나타남</li>
@@ -1437,13 +1437,13 @@ URI uri = URI.create(fullUrl);`}
                   {/* 과정 */}
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">🔍 과정</h4>
-                    <p className="text-sm text-gray-700 mb-2">문제 분석을 통해 다음 사항을 파악하였습니다:</p>
+                    <p className="text-sm text-gray-700 mb-2">문제 분석을 통해 다음 사항을 파악:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
                       <li>좋아요 수는 실시간으로 빠르게 업데이트되어야 하지만, 반드시 DB 트랜잭션 안에서 처리할 필요는 없음</li>
                       <li>likeCount는 계산 가능한 값이며, 정확성만 보장되면 Redis 등 임시 저장소에서 캐싱해도 무방함</li>
                       <li>동시에 여러 요청이 들어올 경우 임계 구간을 보호하기 위한 락 처리가 필요함</li>
                     </ul>
-                    <p className="text-sm text-gray-700 mt-2">이에 따라, 다음과 같은 방향으로 리팩토링을 진행하였습니다:</p>
+                    <p className="text-sm text-gray-700 mt-2">이에 따라, 다음과 같은 방향으로 리팩토링을 진행함:</p>
                   </div>
 
                   {/* 해결 */}
@@ -1531,9 +1531,7 @@ lock.unlock();`}
 
                   {/* 결과 */}
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📈 결과</h4>
-                    <p className="text-sm text-gray-700 mb-4">JMeter를 이용해 전후 성능 테스트를 진행한 결과, 다음과 같은 개선 효과를 얻을 수 있었습니다:</p>
-                    
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📈 결과 (JMeter 테스트)</h4>
                     <div className="overflow-x-auto">
                       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
                         <thead className="bg-gray-100">
@@ -1576,15 +1574,15 @@ lock.unlock();`}
                     <div className="mt-4 p-3 bg-gray-100 rounded-lg">
                       <p className="text-sm text-gray-700">
                         <strong>💡 핵심 개선:</strong> Redis 캐시와 Redisson 락을 통해 좋아요 요청 처리 성능이 9배 이상 향상되었으며, 
-                        동시성 문제도 완전히 해결하여 안정적인 서비스를 제공할 수 있게 되었습니다.
+                        동시성 문제도 완전히 해결하여 안정적인 서비스를 제공할 수 있게 됨.
                       </p>
                     </div>
                     
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 mt-4">
-                      <li>좋아요 요청 처리 성능이 9배 이상 향상되었으며,</li>
-                      <li>동시에 요청해도 데이터 충돌 없이 안정적으로 처리 가능해졌습니다.</li>
-                      <li>Redis 캐시 구조를 통해 DB 부하를 크게 줄이고,</li>
-                      <li>Redisson 락을 통해 정합성과 동시성 안전성을 확보할 수 있었습니다.</li>
+                      <li>좋아요 요청 처리 성능이 9배 이상 향상됨</li>
+                      <li>동시에 요청해도 데이터 충돌 없이 안정적으로 처리 가능</li>
+                      <li>Redis 캐시 구조를 통해 DB 부하를 크게 줄임</li>
+                      <li>Redisson 락을 통해 정합성과 동시성 안전성을 확보</li>
                     </ul>
                   </div>
                 </div>
