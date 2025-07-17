@@ -21,7 +21,8 @@ export default function Experience() {
       subtitle: "백엔드 부트캠프 13기: Java",
       period: "2024.11 ~ 2025.06",
       description: [
-        "Spring Boot 기반의 웹 서비스 개발, REST API 설계, DB 모델링, 배포 등 백엔드 전반을 학습"
+        "Spring Boot 기반의 웹 서비스 개발, REST API 설계, DB 모델링, 배포 등 백엔드 전반을 학습",
+        "프로젝트 우수상 수상 - 팀의 뛰어난 협업과 기술적 성과를 인정받아 수상"
       ],
       icon: (
         <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
