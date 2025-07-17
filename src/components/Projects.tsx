@@ -765,88 +765,122 @@ export default function Projects() {
           return (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">📦 Inventory 분석 API 성능 최적화 시스템 구축</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📦 비품 통계 API 캐싱 및 성능 최적화</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔶 1. 배경</h4>
-                    <p className="text-sm text-gray-700 mb-2">관리자 페이지에서 다음과 같은 분석 통계 API들이 자주 호출되고 있었습니다:</p>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📌 배경</h4>
+                    <p className="text-sm text-gray-700 mb-2">카테고리별 수량/종류 통계, 품목 사용 빈도, Outbound 상태 통계 등 주요 통계 API가 자주 호출</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>카테고리별 수량 및 종류 통계</li>
-                      <li>품목 사용 빈도 (Top N) 랭킹</li>
-                      <li>아이템 인스턴스의 상태별(Outbound 등) 통계</li>
-                    </ul>
-                    <p className="text-sm text-gray-700 mt-2">문제는 다음과 같았습니다:</p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>통계 API 호출 시마다 복잡한 DB 연산 및 그룹핑이 발생</li>
-                      <li>사용자 수 및 트래픽 증가에 따라 응답 지연 및 DB 부하 발생</li>
-                      <li>일부 통계는 TTL이 짧은 구조라 캐시가 자주 비워지고, MISS가 발생하면 동시에 수십 건의 DB 쿼리가 발생하여 병목이 생김</li>
+                      <li>통계 호출마다 복잡한 DB 연산 + 그룹핑 발생</li>
+                      <li>사용자 수 증가에 따라 응답 지연, DB 부하 증가</li>
+                      <li>TTL 만료 시점에 다수의 요청 동시 유입 → DB 병목 발생</li>
                     </ul>
                   </div>
 
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🎯 2. 해결 목표</h4>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 해결 목표</h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>주요 분석 API 응답 속도를 평균 200ms 이하로 단축</li>
-                      <li>Redis 기반 캐싱 구조를 적용해 DB 조회 수를 최소화</li>
-                      <li>캐시 미스(MISS) 시 발생하는 동시성 문제를 제어하여 안정성 확보</li>
-                      <li>실시간 통계 제공과 데이터 정확성, 확장성을 동시에 확보</li>
+                      <li>주요 분석 API 평균 응답 속도 200ms 이하 달성</li>
+                      <li>Redis 캐싱 도입으로 DB 조회 횟수 최소화</li>
+                      <li>TTL 만료 후 동시성 문제(Redisson Lock) 제어</li>
+                      <li>실시간 통계 + 정확성 + 확장성 동시 확보</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              {/* 해결 과정 */}
+              {/* 해결 1: Redis 캐시 구조 최적화 */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">⚙️ 3. 해결 과정</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 1: Redis 캐시 구조 최적화</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ Redis 기반 캐시 구조 설계</h4>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔧 기존 방식 (비효율)</h4>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`List<Item> items = itemRepository.findAllByManagementDashboardIdAndStatus(managementId, Status.ACTIVE);
+Map<String, CategorySummaryDTO> result = process(items); // 매 요청마다 DB 접근 + 가공`}
+                      </pre>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-2">💬 문제점:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 mt-2">
+                      <li>매번 DB에서 전체 품목 데이터를 조회</li>
+                      <li>불필요한 반복 연산 및 응답 지연 발생</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 개선 방법</h4>
+                    <p className="text-sm text-gray-700 mb-2">통계 목적별로 Redis 자료구조를 분리 설계</p>
                     <div className="overflow-x-auto">
                       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
                         <thead className="bg-gray-100">
                           <tr>
                             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">항목</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">Redis 구조</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">Redis 자료구조</th>
                             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">TTL</th>
                             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">목적</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 text-sm text-gray-700">카테고리 요약 통계</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">카테고리별 요약 통계</td>
                             <td className="px-4 py-3 text-sm text-gray-700">Value (Map)</td>
                             <td className="px-4 py-3 text-sm text-gray-700">30분</td>
-                            <td className="px-4 py-3 text-sm text-gray-700">반복 요청에 즉시 응답</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">반복 요청에 대해 빠른 응답 제공</td>
                           </tr>
                           <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 text-sm text-gray-700">품목별 사용 빈도</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">품목 사용 빈도 랭킹</td>
                             <td className="px-4 py-3 text-sm text-gray-700">ZSet</td>
                             <td className="px-4 py-3 text-sm text-gray-700">실시간</td>
-                            <td className="px-4 py-3 text-sm text-gray-700">Top N 정렬, 점수 누적</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">Top-N 정렬 및 점수 누적에 최적화</td>
                           </tr>
                           <tr>
                             <td className="px-4 py-3 text-sm text-gray-700">Outbound 상태 통계</td>
                             <td className="px-4 py-3 text-sm text-gray-700">Hash</td>
                             <td className="px-4 py-3 text-sm text-gray-700">10분</td>
-                            <td className="px-4 py-3 text-sm text-gray-700">상태별 카운트 빠른 조회</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">상태별 개수 빠른 조회</td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`Map<String, CategorySummaryDTO> cached = redisTemplate.opsForValue().get(key);
+if (cached != null) return cached;
+
+// MISS일 때만 DB 조회 및 Redis 저장`}
+                      </pre>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              {/* 해결 2: TTL 만료 시 Redisson 락 적용 */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 2: TTL 만료 시 Redisson 락 적용</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔧 기존 방식 (문제 상황)</h4>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`// 캐시가 만료되면 모든 요청이 동시에 DB 접근 → 병목 발생`}
+                      </pre>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-2">💬 문제점:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 mt-2">
-                      <li>StringRedisTemplate 기반으로 ZSet 병목 개선</li>
-                      <li>DTO 구조 경량화 및 응답 직렬화 최적화</li>
+                      <li>수십 개의 요청이 동시에 DB 조회 수행</li>
+                      <li>급격한 트래픽 상승 시 DB 부하 폭증</li>
                     </ul>
                   </div>
 
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ Redisson 기반 분산 락 적용</h4>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 개선 방법</h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>TTL 만료 직후 발생하는 중복 DB 조회 문제 해결</li>
-                      <li>캐시 MISS 시 RLock을 이용하여 하나의 요청만 DB 접근</li>
-                      <li>기타 요청은 Redis HIT 발생 이후 빠르게 응답</li>
+                      <li>Redisson RLock 적용으로 한 요청만 DB 접근 허용</li>
                     </ul>
                     <div className="bg-gray-100 p-4 rounded mt-2">
                       <pre className="text-sm text-gray-700 overflow-x-auto">
@@ -856,106 +890,195 @@ if (lock.tryLock(3, 2, TimeUnit.SECONDS)) {
 }`}
                       </pre>
                     </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 성능 분석 및 검증</h4>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>JMeter를 통해 캐시 사용 전/후의 응답 시간, 처리량, 안정성 측정</li>
-                      <li>Postman, StopWatch를 활용한 실시간 응답 체감 시간 및 로그 확인</li>
-                    </ul>
+                    <p className="text-sm text-gray-700 mt-2">그 외 요청은 캐시가 적재된 후 Redis HIT로 빠르게 응답</p>
                   </div>
                 </div>
               </div>
 
-              {/* 성능 개선 결과 */}
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">📈 4. 성능 개선 결과</h3>
+              {/* 최종 통합 코드 */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 최종 통합 코드 (핵심 부분)</h3>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* 1. 카테고리 요약 통계 캐시 */}
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📌 1. 카테고리별 수량/종류 분석 API</h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                        <thead className="bg-gray-100">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">구분</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">평균 응답(ms)</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">Throughput</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">최대 응답(ms)</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">개선 전 (1000건)</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">596ms</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">24.0/sec</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">1531ms</td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">개선 후 (1000건)</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">74ms</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">32.5/sec</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">190ms</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">🔍 카테고리 요약 통계 캐시</h4>
+                    <div className="bg-gray-100 p-4 rounded">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`public Map<String, CategorySummaryDTO> getCategorySummary() {
+    String key = getCategorySummaryKey(managementId);
+    Map<String, CategorySummaryDTO> cached = (Map<String, CategorySummaryDTO>) 
+        objectRedisTemplate.opsForValue().get(key);
+    if (cached != null) return cached;
+
+    // DB 조회 및 가공
+    List<Item> items = itemRepository.findAllByManagementDashboardIdAndStatus(...);
+    Map<String, CategorySummaryDTO> result = ...;
+
+    objectRedisTemplate.opsForValue().set(key, result, Duration.ofMinutes(30));
+    return result;
+}`}
+                      </pre>
+                    </div>
+                    <div className="mt-2 p-2 bg-green-50 rounded">
+                      <p className="text-xs text-green-700">
+                        <strong>💡 특징:</strong> Value 구조로 30분 TTL, 반복 요청에 대해 빠른 응답 제공
+                      </p>
                     </div>
                   </div>
 
+                  {/* 2. 품목별 사용 빈도 Top-N 조회 (ZSet) */}
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📌 2. Outbound 상태 통계 API</h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                        <thead className="bg-gray-100">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">구분</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">평균 응답(ms)</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">Throughput</th>
-                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">최대 응답(ms)</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">개선 전 (1000건)</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">263ms</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">30.5/sec</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">1538ms</td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">개선 후 (1000건)</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">201ms → 74ms</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">32.9/sec</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-center">498ms</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">📈 품목별 사용 빈도 Top-N 조회 (ZSet)</h4>
+                    <div className="bg-gray-100 p-4 rounded">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`public List<ItemUsageFrequencyDTO> getItemUsageRanking(int topN) {
+    Set<ZSetOperations.TypedTuple<String>> zset = stringRedisTemplate.opsForZSet()
+        .reverseRangeWithScores(redisKey, 0, topN - 1);
+    ...
+}`}
+                      </pre>
+                    </div>
+                    <div className="mt-2 p-2 bg-blue-50 rounded">
+                      <p className="text-xs text-blue-700">
+                        <strong>💡 특징:</strong> ZSet 구조로 실시간 랭킹, 점수 기반 정렬 및 Top-N 조회 최적화
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-gray-100 rounded-lg">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">📊 효과 요약:</h4>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>평균 응답 시간: 최대 70~88% 단축</li>
-                      <li>Throughput: 약 25~35% 향상</li>
-                      <li>DB 병목 구간 제거 및 고부하 상황에서도 안정적인 응답 확보</li>
-                    </ul>
+                  {/* 3. Outbound 상태 통계 (Redisson 분산 락) */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">📦 Outbound 상태 통계 (Redisson 분산 락)</h4>
+                    <div className="bg-gray-100 p-4 rounded">
+                      <pre className="text-sm text-gray-700 overflow-x-auto">
+{`public Map<Outbound, Long> loadAndCacheOutboundSummary() {
+    RLock lock = redissonClient.getLock(lockKey);
+    if (lock.tryLock(1, 5, TimeUnit.SECONDS)) {
+        // Redis 재확인 후 DB 조회
+        List<Object[]> results = itemInstanceRepository
+            .countAllByOutboundGroupAndManagementIdAndStatus(...);
+        Map<String, String> redisMap = ...;
+        objectRedisTemplate.opsForHash().putAll(redisKey, redisMap);
+        objectRedisTemplate.expire(redisKey, Duration.ofMinutes(10));
+        return mapped;
+    } else {
+        // 락 실패 시 짧게 대기 후 캐시 재확인
+    }
+}`}
+                      </pre>
+                    </div>
+                    <div className="mt-2 p-2 bg-orange-50 rounded">
+                      <p className="text-xs text-orange-700">
+                        <strong>💡 특징:</strong> Hash 구조 + Redisson 락으로 동시성 제어, 10분 TTL로 상태별 개수 빠른 조회
+                      </p>
+                    </div>
                   </div>
                 </div>
+
+
+              </div>
+
+              {/* 성능 개선 결과 */}
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📈 성능 개선 결과 (JMeter 테스트)</h3>
+                
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">📌 1. 카테고리별 수량/종류 분석 API</h4>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">지표</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 전</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 후</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선율</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">평균 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">596ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">74ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 87.6% 개선</td>
+                          </tr>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">최대 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">1531ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">190ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 87.6% 개선</td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">처리량 (TPS)</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">24.0/sec</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">32.5/sec</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 35.4% 향상</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">📌 2. Outbound 상태 통계 API</h4>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">지표</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 전</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 후</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선율</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">평균 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">263ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">74ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 71.9% 개선</td>
+                          </tr>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">최대 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">1538ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">498ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 67.6% 개선</td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">처리량 (TPS)</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">30.5/sec</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">32.9/sec</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 7.9% 향상</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 효과 요약 */}
+              <div className="bg-gray-50 p-4 rounded-lg mt-4">
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">📊 효과 요약</h4>
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>평균 응답 시간 최대 88% 단축, 처리량 최대 35% 향상</strong>
+                </p>
+                <p className="text-sm text-gray-700">
+                  → 고부하 상황에서도 안정적 통계 처리 가능
+                </p>
               </div>
 
               {/* 정리 */}
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">✅ 정리</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  Redis 기반 캐싱 구조를 적용하여 분석 API 응답 속도를 크게 향상시켰고,
-                  Redisson 기반 락을 통해 캐시 초기화 시점의 DB 쿼리 중복 문제를 해소하였습니다.
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  실시간 랭킹(ZSet), 상태별 통계(Hash), 분류 요약(Value) 등 Redis 자료구조를 목적별로 분리하여 확장성과 유지보수성까지 고려한 설계를 수행하였습니다.
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>🧠 이 경험을 통해 실시간 통계 처리 시스템에서 캐시 TTL, 동시성 제어, 직렬화 성능 최적화가 얼마나 중요한지 실감할 수 있었습니다.</strong>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                  <li>Redis 자료구조를 통계 목적별로 Value, ZSet, Hash로 분리 설계</li>
+                  <li>Redisson 분산 락으로 TTL 만료 시 중복 조회 방지</li>
+                  <li>응답 속도는 최대 88% 단축, 처리량은 최대 35% 증가</li>
+                </ul>
+                <p className="text-sm text-gray-700 mt-3">
+                  <strong>🧠 실시간 분석 시스템에서 TTL 전략, 동시성 제어, 직렬화 성능이
+얼마나 중요한지 실무를 통해 깊이 체감한 경험입니다.</strong>
                 </p>
               </div>
             </div>
@@ -967,49 +1090,49 @@ if (lock.tryLock(3, 2, TimeUnit.SECONDS)) {
           return (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">🧩 JPA N+1 문제 및 좋아요 상태 조회 개선</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">🧩 JPA N+1 및 좋아요 상태 조회 개선</h3>
                 
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">📌 배경</h4>
-                    <p className="text-sm text-gray-700 mb-2">게시판 기능 개발 중, 게시글의 댓글 목록을 조회할 때 다음과 같은 두 가지 성능 이슈가 발생했습니다:</p>
+                    <p className="text-sm text-gray-700 mb-2">게시판 기능 개발 중, 댓글 목록 조회 시 다음과 같은 성능 이슈 발생:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li><strong>N+1 쿼리 문제:</strong> board.getComments() 호출 시, 댓글 수만큼 추가 쿼리 발생</li>
-                      <li><strong>LAZY 로딩이 원인:</strong> 댓글 10개면 쿼리 11번</li>
-                      <li><strong>좋아요 상태 조회 비효율:</strong> 각 댓글에 대해 해당 사용자가 좋아요를 눌렀는지 여부 확인</li>
-                      <li><strong>contains() 반복 호출:</strong> 연산 비용 증가 및 가독성 저하</li>
+                      <li>board.getComments() 호출 시 N+1 쿼리 발생</li>
+                      <li>각 댓글마다 좋아요 상태를 확인하기 위해 contains() 반복 호출</li>
+                      <li>댓글 10개 → 쿼리 11개 발생 (LAZY 로딩 문제)</li>
                     </ul>
                   </div>
 
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 해결 목표</h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                      <li>DB 쿼리 수 최소화</li>
-                      <li>좋아요 상태 조회 효율화</li>
-                      <li>응답 속도 및 처리량 개선</li>
+                      <li>DB 쿼리 수 최소화 및 응답 속도 개선</li>
+                      <li>좋아요 상태 조회 방식 효율화</li>
+                      <li>전체 처리량 향상 및 코드 가독성 개선</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              {/* 해결 방법 1: N+1 문제 */}
+              {/* 해결 1: N+1 쿼리 해결 */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 1: N+1 문제 - Fetch Join 사용</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 1: N+1 쿼리 해결</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔧 기존 문제 코드</h4>
-                    <div className="bg-gray-100 p-4 rounded">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">🔧 기존 방식 (비효율)</h4>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
                       <pre className="text-sm text-gray-700 overflow-x-auto">
-{`List<Comment> comments = board.getComments(); // N+1 발생`}
+{`List<Comment> comments = board.getComments(); // 댓글 수만큼 추가 쿼리 발생`}
                       </pre>
                     </div>
+                    <p className="text-sm text-gray-700 mt-2">💬 문제점: LAZY 로딩으로 인해 댓글 수 N만큼 DB 쿼리 추가 발생 → N+1</p>
                   </div>
 
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 개선 방법</h4>
-                    <p className="text-sm text-gray-700 mb-2">CommentRepository에서 @Query + fetch join으로 한번에 조회</p>
-                    <div className="bg-gray-100 p-4 rounded">
+                    <p className="text-sm text-gray-700 mb-2">Fetch Join을 사용해 댓글 + 작성자 정보를 단일 쿼리로 조회</p>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
                       <pre className="text-sm text-gray-700 overflow-x-auto">
 {`@Query("""
 SELECT c FROM Comment c
@@ -1020,47 +1143,38 @@ ORDER BY c.creationTime ASC
 List<Comment> findWithUserByBoardIdAndStatus(Long boardId, Status status);`}
                       </pre>
                     </div>
-                    <p className="text-sm text-gray-700 mt-2">서비스 코드에서 직접 repository 호출:</p>
-                    <div className="bg-gray-100 p-4 rounded">
-                      <pre className="text-sm text-gray-700 overflow-x-auto">
-{`List<Comment> comments = commentRepository.findWithUserByBoardIdAndStatus(boardId, Status.ACTIVE);`}
-                      </pre>
-                    </div>
-                    <p className="text-sm text-gray-700 mt-2"><strong>🔹 효과:</strong> 댓글 수에 상관없이 쿼리 1회로 모든 데이터 조회 가능</p>
+                    <p className="text-sm text-gray-700 mt-2">💡 단일 쿼리로 모든 댓글과 작성자 정보를 한 번에 조회</p>
                   </div>
                 </div>
               </div>
 
-              {/* 해결 방법 2: 좋아요 상태 조회 */}
+              {/* 해결 2: 좋아요 상태 조회 최적화 */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 2: 좋아요 상태 조회 - Map 매핑 최적화</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 해결 2: 좋아요 상태 조회 최적화</h3>
                 
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">🔧 기존 방식 (비효율)</h4>
-                    <div className="bg-gray-100 p-4 rounded">
+                    <div className="bg-gray-100 p-4 rounded mt-2">
                       <pre className="text-sm text-gray-700 overflow-x-auto">
-{`Set<Long> likedIds = likes.stream().map(...).collect(Collectors.toSet());
-boolean isLiked = likedIds.contains(comment.getId()); // 반복 contains()`}
+{`boolean isLiked = likedIds.contains(comment.getId()); // 댓글 수만큼 반복 탐색 (O(n))`}
                       </pre>
                     </div>
                   </div>
 
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">✅ 개선 방법</h4>
-                    <div className="bg-gray-100 p-4 rounded">
+                    <p className="text-sm text-gray-700 mb-2">Map 자료구조로 변경하여 시간복잡도 O(n) → O(1) 로 개선</p>
+                    <div className="bg-gray-100 p-4 rounded mt-2">
                       <pre className="text-sm text-gray-700 overflow-x-auto">
 {`Map<Long, Boolean> likedMap = likes.stream()
     .map(like -> like.getComment().getId())
-    .collect(Collectors.toMap(
-        Function.identity(),
-        id -> true
-    ));
+    .collect(Collectors.toMap(Function.identity(), id -> true));
 
-boolean isLiked = likedMap.getOrDefault(comment.getId(), false);`}
+boolean isLiked = likedMap.getOrDefault(comment.getId(), false); // O(1)`}
                       </pre>
                     </div>
-                    <p className="text-sm text-gray-700 mt-2"><strong>🔹 효과:</strong> 댓글 수에 상관없이 O(1) 시간복잡도로 좋아요 여부 확인</p>
+                    <p className="text-sm text-gray-700 mt-2">💡 Map.get()으로 O(1) 시간복잡도로 좋아요 상태 조회</p>
                   </div>
                 </div>
               </div>
@@ -1068,13 +1182,15 @@ boolean isLiked = likedMap.getOrDefault(comment.getId(), false);`}
               {/* 최종 통합 코드 */}
               <div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4">✅ 최종 통합 코드 (핵심 부분)</h3>
-                <div className="bg-gray-100 p-4 rounded">
-                  <pre className="text-sm text-gray-700 overflow-x-auto">
+                
+                <div className="space-y-6">
+                  <div className="bg-gray-100 p-4 rounded">
+                    <pre className="text-sm text-gray-700 overflow-x-auto">
 {`public List<CommentResponseDto> getCommentsByBoardId(Long boardId, Long userId) {
+    // 1. Fetch Join으로 N+1 해결
     List<Comment> comments = commentRepository.findWithUserByBoardIdAndStatus(boardId, Status.ACTIVE);
 
-    if (comments.isEmpty()) return List.of();
-
+    // 2. 좋아요 상태 Map으로 최적화
     List<Long> commentIds = comments.stream().map(Comment::getId).toList();
     List<CommentLike> likes = likeRepository.findByCommentIdInAndUserId(commentIds, userId);
 
@@ -1086,70 +1202,70 @@ boolean isLiked = likedMap.getOrDefault(comment.getId(), false);`}
         .map(comment -> CommentResponseDto.fromEntity(comment, likedMap.getOrDefault(comment.getId(), false)))
         .toList();
 }`}
-                  </pre>
+                    </pre>
+                  </div>
                 </div>
               </div>
 
-              {/* 성능 개선 분석 */}
+              {/* 성능 개선 결과 */}
               <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">📈 성능 개선 결과</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">📈 성능 개선 결과 (JMeter 테스트)</h3>
                 
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">지표</th>
-                        <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 전</th>
-                        <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 후</th>
-                        <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선율</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-200">
-                        <td className="px-4 py-3 text-sm text-gray-700 font-medium">평균 응답 시간</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">105ms</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">17ms</td>
-                        <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 84%</td>
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="px-4 py-3 text-sm text-gray-700 font-medium">최대 응답 시간</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">620ms</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">138ms</td>
-                        <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 77%</td>
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="px-4 py-3 text-sm text-gray-700 font-medium">처리량</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">80.1/sec</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">102.2/sec</td>
-                        <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 27.6%</td>
-                      </tr>
-                      <tr>
-                        <td className="px-4 py-3 text-sm text-gray-700 font-medium">응답 안정성</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">90.66</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-center">8.42</td>
-                        <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 90%</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                                      <p className="text-sm text-gray-700">
-                      <strong>💡 핵심 개선:</strong> N+1 쿼리 문제 해결로 쿼리 수를 &quot;댓글 수 + 1&quot;에서 &quot;1&quot;로 대폭 감소시켜 전체적인 성능 향상을 달성했습니다.
-                    </p>
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-3">📌 댓글 목록 조회 API</h4>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-300">지표</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 전</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선 후</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-300">개선율</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">평균 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">105ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">17ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 83.8% 단축</td>
+                          </tr>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">최대 응답 시간</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">620ms</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">138ms</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 77.7% 단축</td>
+                          </tr>
+                          <tr className="border-b border-gray-200">
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">처리량 (TPS)</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">80.1/sec</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">102.2/sec</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▲ 27.6% 향상</td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 text-sm text-gray-700 font-medium">응답 안정성 점수</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">90.66</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 text-center">8.42</td>
+                            <td className="px-4 py-3 text-sm text-green-600 font-semibold text-center">▼ 90.7% 개선</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-    
               {/* 정리 */}
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">✅ 정리</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  이 작업을 통해 단순 조회 로직임에도 발생하던 N+1 쿼리 문제와 Stream 반복 비용을 제거하고, 
-                  대규모 댓글 데이터 환경에서도 안정적이고 빠른 API 응답이 가능하게 되었습니다.
-                </p>
-                <p className="text-sm text-gray-700">
-                  <strong>→ 실제 응답 속도 최대 84% 개선, 처리량 27% 증가라는 수치적 결과로 이어졌습니다.</strong>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                  <li>Fetch Join을 통해 N+1 쿼리 제거</li>
+                  <li>좋아요 여부는 Set.contains() 대신 Map.get()으로 최적화</li>
+                  <li>평균 응답 시간 84% 단축, 처리량 27% 증가</li>
+                </ul>
+                <p className="text-sm text-gray-700 mt-3">
+                  <strong>🧠 단순 조회 로직도 성능 병목의 원인이 될 수 있으며, 사전 대응이 중요함을 실무에서 체감했습니다.</strong>
                 </p>
               </div>
             </div>
